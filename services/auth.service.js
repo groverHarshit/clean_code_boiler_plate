@@ -18,18 +18,6 @@ const authService = () => {
                 .json({ success: false, msg: "Authorization Token not found" });
         }
 
-        if (!req.headers['apikey']) {
-            return res
-                .status(401)
-                .json({ success: false, msg: "Authorization Key not found" });
-        }
-
-        if (req.headers['apikey'] !== process.env.api_key) {
-            return res
-                .status(401)
-                .json({ success: false, msg: "Authorization Key not found" });
-        }
-
         const parts = req.header("authorization").split(" ");
         const scheme = parts[0];
         const credentials = parts[1];

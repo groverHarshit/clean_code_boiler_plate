@@ -5,9 +5,50 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
 require('dotenv').config();
+const cors = require('cors');
 
 var app = express();
-app.listen(process.env.PORT || 3000, () => console.log(`Listening on PORT => ${process.env.PORT || 3000}`))
+app.listen(process.env.PORT || 3000, () => console.log(`Listening on PORT => ${process.env.PORT || 3000}`));
+app.use(cors());
+
+/**
+ * Swagger UI Configuration
+ */
+
+const swaggerJSDoc = require("swagger-jsdoc");
+const swaggerUi = require("swagger-ui-express");
+
+const swaggerDefinition = {
+  info: {
+    title: "Clean Architecture Boiler Plate",
+    version: "1.0.0",
+    description: "Endpoints to test APIs",
+  },
+  host: "localhost:3000",
+  basePath: "/",
+  securityDefinitions: {
+    bearerAuth: {
+      type: "apiKey",
+      name: "Authorization",
+      scheme: "bearer",
+      in: "header",
+    },
+  },
+};
+
+const SwaggerOptions = {
+  swaggerDefinition,
+  apis: ["routes/*.js"],
+};
+
+const swaggerSpec = swaggerJSDoc(SwaggerOptions);
+
+app.get("/swagger.json", function (req, res) {
+  res.setHeader("Content-Type", "application/json");
+  res.send(swaggerSpec);
+});
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
